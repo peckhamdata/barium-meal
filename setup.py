@@ -4,8 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="foo-py",
-    version="0.0.1",
+    name="barium-meal",
+    version="0.0.6",
     author="Peckham Data Centre",
     author_email="chris@peckhamdata.com",
     description="Convenience wrapper for OpenTelemetry",
@@ -21,5 +21,10 @@ setuptools.setup(
     ],
     python_requires='>=3.6',
     install_requires=[
+        "pytest",
+        "opentelemetry-exporter-jaeger",
+        "opentelemetry-api",
+        "opentelemetry.instrumentation.requests",
+        "opentelemetry.instrumentation.boto"
     ]
 )
