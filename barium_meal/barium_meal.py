@@ -1,3 +1,5 @@
+from base64 import b32encode
+
 from opentelemetry import trace
 from opentelemetry.exporter import jaeger
 from opentelemetry.sdk.trace import TracerProvider
@@ -55,6 +57,28 @@ class BariumMeal():
                                              span_id=event_data['trace']['span_id'],
                                              trace_flags=trace.TraceFlags(event_data['trace']['trace_flags']),
                                              trace_state=trace.TraceState(event_data['trace']['trace_state']),
+                                             is_remote=True)
+        base_span = trace.DefaultSpan(context=incoming_context)
+        our_context = Context({'current-span': base_span})
+        context.attach(our_context)
+
+
+    def get_traceparent_header(self, span):
+        trace_id = hex(span.get_span_context().trace_id)[2:]
+        parent_id = hex(span.get_span_context().span_id)[2:]
+        trace_flags = str(span.get_span_context().trace_flags).zfill(1)
+        header = f'00-{trace_id}-{parent_id}-{trace_flags}'
+        return {'traceparent': header}
+
+
+    def get_context_from_headers(self, traceparent_header):
+        trace_id = int(traceparent_header['traceparent'][3:35], 16)
+        span_id = int(traceparent_header['traceparent'][37:44], 16)
+        trace_flags = int(traceparent_header['traceparent'][45:], 16)
+
+        incoming_context = trace.SpanContext(trace_id=trace_id,
+                                             span_id=span_id,
+                                             trace_flags=trace.TraceFlags(trace_flags),
                                              is_remote=True)
         base_span = trace.DefaultSpan(context=incoming_context)
         our_context = Context({'current-span': base_span})
