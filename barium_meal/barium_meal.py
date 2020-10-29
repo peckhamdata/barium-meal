@@ -73,8 +73,8 @@ class BariumMeal():
 
     def get_context_from_headers(self, traceparent_header):
         trace_id = int(traceparent_header['traceparent'][3:35], 16)
-        span_id = int(traceparent_header['traceparent'][37:44], 16)
-        trace_flags = int(traceparent_header['traceparent'][45:], 16)
+        span_id = int(traceparent_header['traceparent'][37:52], 16)
+        trace_flags = int(traceparent_header['traceparent'][53:], 16)
 
         incoming_context = trace.SpanContext(trace_id=trace_id,
                                              span_id=span_id,

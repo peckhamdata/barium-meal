@@ -71,16 +71,19 @@ def test_traceparent_header_from_span_state():
         header = bm.get_traceparent_header(my_span)
         assert isinstance(header['traceparent'], str)
 
-    matches = re.findall('00-[a-f0-9]{32}-[a-f0-9]{16}-[a-f0-9]{2}',
-                         header['traceparent'])
-    assert len(matches) == 1
+        matches = re.findall('00-[a-f0-9]{32}-[a-f0-9]{16}-[a-f0-9]{2}',
+                             header['traceparent'])
+        assert len(matches) == 1
+
+
 def test_resume_span_from_headers():
     """
     Just going to do traceparent to get started
     """
     bm = BariumMeal()
     tracer = bm.get_tracer()
-    traceparent_header = {'traceparent': '00-0000000000000000000000000000000f-0000000a-00'}
+    traceparent_header = {'traceparent': '00-0000000000000000000000000000000f-000000000000000a-00'}
     bm.get_context_from_headers(traceparent_header)
     with tracer.start_as_current_span("my_span") as my_span:
         assert my_span.get_span_context().trace_id == 15
+        assert my_span.get_span_context().trace_flags == 0
