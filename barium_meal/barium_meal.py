@@ -64,9 +64,9 @@ class BariumMeal():
 
 
     def get_traceparent_header(self, span):
-        trace_id = hex(span.get_span_context().trace_id)[2:]
-        parent_id = hex(span.get_span_context().span_id)[2:]
-        trace_flags = str(span.get_span_context().trace_flags).zfill(1)
+        trace_id = str(hex(span.get_span_context().trace_id)[2:]).zfill(32)
+        parent_id = str(hex(span.get_span_context().span_id)[2:]).zfill(16)
+        trace_flags = str(span.get_span_context().trace_flags).zfill(2)
         header = f'00-{trace_id}-{parent_id}-{trace_flags}'
         return {'traceparent': header}
 

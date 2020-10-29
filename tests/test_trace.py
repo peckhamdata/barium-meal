@@ -1,6 +1,7 @@
 """
 Test barium meal trace
 """
+import re
 import opentelemetry
 from barium_meal import BariumMeal
 
@@ -70,7 +71,9 @@ def test_traceparent_header_from_span_state():
         header = bm.get_traceparent_header(my_span)
         assert isinstance(header['traceparent'], str)
 
-
+    matches = re.findall('00-[a-f0-9]{32}-[a-f0-9]{16}-[a-f0-9]{2}',
+                         header['traceparent'])
+    assert len(matches) == 1
 def test_resume_span_from_headers():
     """
     Just going to do traceparent to get started

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="barium-meal",
-    version="0.0.7",
+    version="0.0.8",
     author="Peckham Data Centre",
     author_email="chris@peckhamdata.com",
     description="Convenience wrapper for OpenTelemetry",
