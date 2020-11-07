@@ -6,6 +6,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.instrumentation.boto import BotoInstrumentor
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from opentelemetry import context
 from opentelemetry.context.context import Context
 
@@ -15,7 +16,8 @@ class BariumMeal():
     def __init__(self,
                  jaeger_config=None,
                  requests=False,
-                 boto=False):
+                 boto=False,
+                 flask_app=None):
         trace.set_tracer_provider(TracerProvider())
         self.tracer = trace.get_tracer(__name__)
 
@@ -23,8 +25,7 @@ class BariumMeal():
         if jaeger_config is not None:
             jaeger_exporter = jaeger.JaegerSpanExporter(
                 service_name=jaeger_config['service_name'],
-                collector_host_name=jaeger_config['collector_host_name'],
-                collector_port=14268,
+                collector_endpoint=jaeger_config['collector_endpoint']
             )
 
             # create a BatchExportSpanProcessor and add the exporter to it
@@ -38,6 +39,9 @@ class BariumMeal():
 
         if boto:
             BotoInstrumentor().instrument(tracer_provider=trace.get_tracer_provider())
+
+        if flask_app:
+            FlaskInstrumentor().instrument_app(flask_app)
 
     def get_tracer(self):
         return self.tracer
@@ -75,7 +79,6 @@ class BariumMeal():
         trace_id = int(traceparent_header['traceparent'][3:35], 16)
         span_id = int(traceparent_header['traceparent'][37:52], 16)
         trace_flags = int(traceparent_header['traceparent'][53:], 16)
-
         incoming_context = trace.SpanContext(trace_id=trace_id,
                                              span_id=span_id,
                                              trace_flags=trace.TraceFlags(trace_flags),

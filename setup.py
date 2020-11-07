@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="barium-meal",
-    version="0.0.9",
+    version="0.0.10",
     author="Peckham Data Centre",
     author_email="chris@peckhamdata.com",
     description="Convenience wrapper for OpenTelemetry",
@@ -22,9 +22,11 @@ setuptools.setup(
     python_requires='>=3.6',
     install_requires=[
         "pytest",
+        "flask",
         "opentelemetry-exporter-jaeger",
         "opentelemetry-api",
-        "opentelemetry.instrumentation.requests",
-        "opentelemetry.instrumentation.boto"
+        "opentelemetry-instrumentation-requests",
+        "opentelemetry-instrumentation-boto",
+        "opentelemetry-instrumentation-flask"
     ]
 )

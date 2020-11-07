@@ -2,14 +2,15 @@
 Test barium meal trace
 """
 import re
+from flask import Flask
 import opentelemetry
 from barium_meal import BariumMeal
 
 
-def test_setup_tracer():
+def test_setup_tracer(requests_mock):
     """Set up OpenTelemetry tracer"""
 
-    bm = BariumMeal(jaeger_config={'collector_host_name': 'jaegerbomb',
+    bm = BariumMeal(jaeger_config={'collector_endpoint': 'http://localhost',
                             'service_name': 'ja-ja-ja'})
 
     tracer = bm.get_tracer()
@@ -57,6 +58,16 @@ def test_instrument_boto():
     tracer = bm.get_tracer()
     assert isinstance(tracer, opentelemetry.sdk.trace.Tracer)
 
+def test_instrument_flask():
+    """Configure to include flask"""
+
+    app = Flask(__name__)
+
+    bm = BariumMeal(flask_app=app)
+
+    tracer = bm.get_tracer()
+    assert isinstance(tracer, opentelemetry.sdk.trace.Tracer)
+
 
 def test_traceparent_header_from_span_state():
     """
@@ -86,4 +97,4 @@ def test_resume_span_from_headers():
     bm.get_context_from_headers(traceparent_header)
     with tracer.start_as_current_span("my_span") as my_span:
         assert my_span.get_span_context().trace_id == 15
-        assert my_span.get_span_context().trace_flags == 0
+        assert my_span.get_span_context().trace_flags == 1
