@@ -22,9 +22,10 @@ setuptools.setup(
     python_requires='>=3.6',
     install_requires=[
         "pytest",
+        "requests-mock",
         "flask",
-        "opentelemetry-exporter-jaeger",
-        "opentelemetry-api",
+        "opentelemetry-exporter-jaeger==0.17b0",
+        "opentelemetry-api==0.17b0",
         "opentelemetry-instrumentation-requests",
         "opentelemetry-instrumentation-boto",
         "opentelemetry-instrumentation-flask"
