@@ -33,7 +33,6 @@ def test_publish_span_state_pubsub():
     with tracer.start_as_current_span("my_span") as my_span:
         message = {'payload': 'value'}
         traceable_message = bm.add_trace(message, my_span)
-
         assert traceable_message['trace']['trace_id'] == my_span.get_span_context().trace_id
 
 
@@ -43,7 +42,7 @@ def test_resume_span_from_message():
     tracer = bm.get_tracer()
     traced_message = {'trace': {'trace_id': 1,
                                 'span_id': 2,
-                                'trace_state': {},
+                                'trace_state': '',
                                 'trace_flags': 1}}
     bm.get_context_from_event_data(traced_message)
     with tracer.start_as_current_span("my_span") as my_span:

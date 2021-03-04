@@ -50,7 +50,7 @@ class BariumMeal():
         traced_message = message.copy()
         traced_message['trace'] = {'trace_id': span.get_span_context().trace_id,
                                    'span_id': span.get_span_context().span_id,
-                                   'trace_state': span.get_span_context().trace_state,
+                                   'trace_state': span.get_span_context().trace_state.to_header(),
                                    'trace_flags': span.get_span_context().trace_flags}
         return traced_message
 
@@ -60,7 +60,7 @@ class BariumMeal():
         incoming_context = trace.SpanContext(trace_id=event_data['trace']['trace_id'],
                                              span_id=event_data['trace']['span_id'],
                                              trace_flags=trace.TraceFlags(event_data['trace']['trace_flags']),
-                                             trace_state=trace.TraceState(event_data['trace']['trace_state']),
+                                             trace_state=trace.TraceState.from_header([event_data['trace']['trace_state']]),
                                              is_remote=True)
         base_span = trace.DefaultSpan(context=incoming_context)
         our_context = Context({'current-span': base_span})
